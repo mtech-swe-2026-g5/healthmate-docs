@@ -1,0 +1,57 @@
+%% healthmate_patient_and_security_schema.mmd
+%% HealthMate — Patient Schema (Phase 1)
+%% Email/password auth with RBAC.
+%% Email verification + refresh token tables provisioned now,
+%% feature logic to be wired up in later phases.
+
+erDiagram
+  roles {
+    smallint id PK
+    varchar name
+    text description
+    timestamptz created_at
+  }
+  users {
+    uuid id PK
+    smallint role_id FK
+    varchar email
+    text password_hash
+    boolean email_verified
+    boolean is_active
+    timestamptz created_at
+    timestamptz updated_at
+  }
+  patients {
+    uuid id PK
+    uuid user_id FK
+    varchar first_name
+    varchar last_name
+    date date_of_birth
+    varchar gender
+    varchar phone_number
+    text profile_picture_url
+    varchar blood_group
+    timestamptz created_at
+    timestamptz updated_at
+  }
+  email_verification_tokens {
+    uuid id PK
+    uuid user_id FK
+    text token_hash
+    timestamptz expires_at
+    timestamptz used_at
+    timestamptz created_at
+  }
+  refresh_tokens {
+    uuid id PK
+    uuid user_id FK
+    text token_hash
+    timestamptz expires_at
+    timestamptz revoked_at
+    timestamptz created_at
+  }
+
+  roles ||--o{ users : "assigned to"
+  users ||--|| patients : "owns profile"
+  users ||--o{ email_verification_tokens : "issued"
+  users ||--o{ refresh_tokens : "has sessions"
