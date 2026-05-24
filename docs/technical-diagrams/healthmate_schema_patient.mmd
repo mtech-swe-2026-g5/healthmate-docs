@@ -1,0 +1,34 @@
+%% healthmate_schema_patient.mmd
+erDiagram
+  roles {
+    smallint id PK
+    varchar name
+    text description
+    timestamptz created_at
+  }
+  users {
+    uuid id PK
+    smallint role_id FK
+    varchar email
+    text password_hash
+    boolean is_active
+    timestamptz created_at
+    timestamptz updated_at
+  }
+  patients {
+    uuid id PK
+    uuid user_id FK
+    varchar first_name
+    varchar last_name
+    date date_of_birth
+    varchar gender
+    varchar phone_number
+    text profile_picture_url
+    varchar blood_group
+    timestamptz created_at
+    timestamptz updated_at
+  }
+
+
+  roles ||--o{ users : "assigned to"
+  users ||--|| patients : "owns profile"
